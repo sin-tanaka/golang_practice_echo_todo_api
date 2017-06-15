@@ -2,5 +2,5 @@
 	"comment": "",
 	"ignore": "test",
 	"package": [],
-	"rootPath": "echo_todo_crud"
+	"rootPath": "github.com/sin_tanaka/echo_todo_crud"
 }
