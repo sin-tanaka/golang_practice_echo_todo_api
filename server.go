@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"os"
 )
 
 // https://echo.labstack.com/cookbook/crudの写経
@@ -77,5 +78,5 @@ func main() {
 	e.DELETE("/tasks/:id", deleteUser)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
