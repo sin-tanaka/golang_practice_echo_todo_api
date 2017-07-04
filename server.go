@@ -33,7 +33,7 @@ var (
 // Handlers
 //----------
 
-func createUser(c echo.Context) error {
+func createTask(c echo.Context) error {
 	u := &todo{
 		ID: seq,
 	}
@@ -45,12 +45,13 @@ func createUser(c echo.Context) error {
 	return c.JSON(http.StatusCreated, u)
 }
 
-func getUser(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
-	return c.JSON(http.StatusOK, tasks[id])
+func getTasks(c echo.Context) error {
+	//id, _ := strconv.Atoi(c.Param("id"))
+	//return c.JSON(http.StatusOK, tasks[id])
+	return c.JSON(http.StatusOK, tasks)  // c.JSONはmapをそのまま返せる
 }
 
-func updateUser(c echo.Context) error {
+func updateTask(c echo.Context) error {
 	u := new(todo)
 	if err := c.Bind(u); err != nil {
 		return err
@@ -60,7 +61,7 @@ func updateUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, tasks[id])
 }
 
-func deleteUser(c echo.Context) error {
+func deleteTask(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	delete(tasks, id)
 	return c.NoContent(http.StatusNoContent)
@@ -91,10 +92,10 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.POST("/tasks", createUser)
-	e.GET("/tasks/:id", getUser)
-	e.PUT("/tasks/:id", updateUser)
-	e.DELETE("/tasks/:id", deleteUser)
+	e.POST("/tasks", createTask)
+	e.GET("/tasks", getTasks)
+	e.PUT("/tasks/:id", updateTask)
+	e.DELETE("/tasks/:id", deleteTask)
 
 	// ルートへアクセスした時
 	e.GET("/", getIndex)
