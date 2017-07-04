@@ -15,7 +15,7 @@ import (
 // モデルはtodoへ変更
 
 type (
-	todo struct {
+	task struct {
 		ID   int    `json:"id"`
 		Task string `json:"task"`
 	}
@@ -25,7 +25,7 @@ var (
 	// 本当はORMなどで、DBのsessionを操作したいが
 	// 一旦todo構造体の配列を用意する
 	// migrationできるORMがよい
-	tasks = map[int]*todo{}
+	tasks = map[int]*task{}
 	seq   = 1
 )
 
@@ -34,7 +34,7 @@ var (
 //----------
 
 func createTask(c echo.Context) error {
-	u := &todo{
+	u := &task{
 		ID: seq,
 	}
 	if err := c.Bind(u); err != nil {
@@ -52,7 +52,7 @@ func getTasks(c echo.Context) error {
 }
 
 func updateTask(c echo.Context) error {
-	u := new(todo)
+	u := new(task)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
