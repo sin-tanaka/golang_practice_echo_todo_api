@@ -7,6 +7,8 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"os"
+	"fmt"
+	"strings"
 )
 
 // https://echo.labstack.com/cookbook/crudの写経
@@ -64,6 +66,23 @@ func deleteUser(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
+func getIndex(c echo.Context) error {
+	header := c.Request().Header //Headerの実装は、map[string][]string
+	html := "<div>Hello World. 下記はあなたのRequestHeaderです。<br/>"
+
+	//range map[]でkey, valueを捜査出来る
+	for key, value := range header{
+		// Joinで配列をカンマ区切りのstringへ変換
+		value := strings.Join(value, ", ")
+
+		// Goで書式化文字列を扱いたいときはSprintf()
+		// %vで良さげに型推定される
+		html += fmt.Sprintf("%s: %v<br/>", key, value)
+	}
+	html += "</div>"
+	return c.HTML(http.StatusOK, html)
+}
+
 func main() {
 	e := echo.New()
 
@@ -77,6 +96,10 @@ func main() {
 	e.PUT("/tasks/:id", updateUser)
 	e.DELETE("/tasks/:id", deleteUser)
 
+	// ルートへアクセスした時
+	e.GET("/", getIndex)
+
 	// Start server
-	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT"))) // Heroku用のポート設定
+	//e.Logger.Fatal(e.Start(":8000")) // DEBUG: ローカル用のポート設定
 }
