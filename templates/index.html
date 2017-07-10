@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+{{ define "index" }}
+<body>
+    <div>Hello World. 下記はあなたのRequestHeaderです。<br/><br/>
+        {{ range $key, $val := .requests }}
+        <div>{{ $key }}: {{ $val }}<br/></div>
+        {{end}}
+    </div>
+</body>
+</html>
+{{ end }}

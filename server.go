@@ -1,106 +1,64 @@
 package main
 
 import (
+	"html/template"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/sin_tanaka/echo_todo_crud/view"
+	"io"
 	"os"
-	"fmt"
 	"strings"
 )
 
-// https://echo.labstack.com/cookbook/crudの写経
-// モデルはtodoへ変更
-
-type (
-	task struct {
-		ID   int    `json:"id"`
-		Task string `json:"task"`
-	}
-)
-
-var (
-	// 本当はORMなどで、DBのsessionを操作したいが
-	// 一旦todo構造体の配列を用意する
-	// migrationできるORMがよい
-	tasks = map[int]*task{}
-	seq   = 1
-)
-
-//----------
-// Handlers
-//----------
-
-func createTask(c echo.Context) error {
-	u := &task{
-		ID: seq,
-	}
-	if err := c.Bind(u); err != nil {
-		return err
-	}
-	tasks[u.ID] = u
-	seq++
-	return c.JSON(http.StatusCreated, u)
+// https://echo.labstack.com/guide/templates を写経
+type Template struct {
+	templates *template.Template
 }
 
-func getTasks(c echo.Context) error {
-	//id, _ := strconv.Atoi(c.Param("id"))
-	//return c.JSON(http.StatusOK, tasks[id])
-	return c.JSON(http.StatusOK, tasks)  // c.JSONはmapをそのまま返せる
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-func updateTask(c echo.Context) error {
-	u := new(task)
-	if err := c.Bind(u); err != nil {
-		return err
-	}
-	id, _ := strconv.Atoi(c.Param("id"))
-	tasks[id].Task = u.Task
-	return c.JSON(http.StatusOK, tasks[id])
-}
-
-func deleteTask(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
-	delete(tasks, id)
-	return c.NoContent(http.StatusNoContent)
-}
 
 func getIndex(c echo.Context) error {
 	header := c.Request().Header //Headerの実装は、map[string][]string
-	html := "<div>Hello World. 下記はあなたのRequestHeaderです。<br/>"
+	requests := map[string]string{}
 
-	//range map[]でkey, valueを捜査出来る
-	for key, value := range header{
-		// Joinで配列をカンマ区切りのstringへ変換
-		value := strings.Join(value, ", ")
-
-		// Goで書式化文字列を扱いたいときはSprintf()
-		// %vで良さげに型推定される
-		html += fmt.Sprintf("%s: %v<br/>", key, value)
+	for key, value := range header { //range map[]でkey, valueを捜査出来る
+		requests[key] = strings.Join(value, ", ")
 	}
-	html += "</div>"
-	return c.HTML(http.StatusOK, html)
+	// {name: {hoge: fuga}} のような構造で渡して、.nameで{hoge: fuga}にアクセスできる
+	data := map[string]map[string]string{
+		"requests": requests,
+	}
+
+	// {{define index}}しているテンプレートファイルに自動的にマッピングする
+	return c.Render(http.StatusOK, "index", data)
 }
+
 
 func main() {
 	e := echo.New()
+	t := &Template{
+		// テンプレートファイルパス
+		templates: template.Must(template.ParseGlob("templates/*.html")),
+	}
+	e.Renderer = t
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.POST("/tasks", createTask)
-	e.GET("/tasks", getTasks)
-	e.PUT("/tasks/:id", updateTask)
-	e.DELETE("/tasks/:id", deleteTask)
+	e.POST("/tasks", view.CreateTask)
+	e.GET("/tasks", view.GetTasks)
+	e.PUT("/tasks/:id", view.UpdateTask)
+	e.DELETE("/tasks/:id", view.DeleteTask)
 
-	// ルートへアクセスした時
 	e.GET("/", getIndex)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT"))) // Heroku用のポート設定
-	//e.Logger.Fatal(e.Start(":8000")) // DEBUG: ローカル用のポート設定
 }
