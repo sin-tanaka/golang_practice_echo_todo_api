@@ -1,10 +1,12 @@
 package models
 
-import "time"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Task struct {
-	ID        int       `json:"id"`
+	// id, created_at, updated_at, deleted_atを自動で付与
+	// ついでにsafe deleteになる
+	gorm.Model
 	Task      string    `json:"task"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 }

@@ -21,7 +21,6 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-
 func getIndex(c echo.Context) error {
 	header := c.Request().Header //Headerの実装は、map[string][]string
 	requests := map[string]string{}
@@ -37,7 +36,6 @@ func getIndex(c echo.Context) error {
 	// {{define index}}しているテンプレートファイルに自動的にマッピングする
 	return c.Render(http.StatusOK, "index", data)
 }
-
 
 func main() {
 	e := echo.New()

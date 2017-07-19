@@ -9,6 +9,24 @@
 			"revisionTime": "2017-05-08T16:54:58Z"
 		},
 		{
+			"checksumSHA1": "VCKsz7001qwfA2bHLo/AOn0xos0=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "bf7f34fef176d890dfcc6e94319ac747291bc09a",
+			"revisionTime": "2017-07-03T06:14:36Z"
+		},
+		{
+			"checksumSHA1": "IqQmIPZbwgzbZD4k7YX6Rj230pY=",
+			"path": "github.com/jinzhu/gorm",
+			"revision": "2a1463811ee1dc85d168fd639a2d4251d030e6e5",
+			"revisionTime": "2017-07-03T13:49:54Z"
+		},
+		{
+			"checksumSHA1": "VIp1lZm6joWhlNdwhady8u//qRw=",
+			"path": "github.com/jinzhu/inflection",
+			"revision": "1c35d901db3da928c72a72d8458480cc9ade058f",
+			"revisionTime": "2017-01-02T12:52:26Z"
+		},
+		{
 			"checksumSHA1": "syE2kyQaf2sfAcsnhEYKzckNkuM=",
 			"path": "github.com/labstack/echo",
 			"revision": "cb9255e7754a2e281d46a21241baba5f5765c7b6",
